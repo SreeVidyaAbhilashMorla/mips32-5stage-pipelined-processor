@@ -159,3 +159,83 @@ Key responsibilities of the WB stage include:
 * Updating the architectural state of the processor.
 * Preventing invalid or flushed instructions from modifying registers.
 * Supporting controlled program termination through the `HLT` instruction.
+
+## Hazard Handling
+### Structural Hazards
+
+Structural hazards occur when multiple pipeline stages compete for the same hardware resource during a clock cycle. To mitigate such conflicts, the processor employs a two-phase clocking scheme that separates pipeline activity across two non-overlapping clock phases.
+
+The Instruction Fetch (IF), Execute (EX), and Write Back (WB) stages operate on `clk1`, while the Instruction Decode (ID) and Memory Access (MEM) stages operate on `clk2`. This arrangement distributes resource utilization across different clock phases, reducing contention between pipeline stages and enabling smooth concurrent execution of instructions.
+
+Additionally, control mechanisms are incorporated to prevent unintended state updates during pipeline flushes and branch redirections, ensuring correct processor operation even in the presence of control-flow changes.
+
+### Structural Hazard Mitigation Techniques
+
+* Two-phase clocking architecture (`clk1` and `clk2`).
+* Separation of pipeline stage activity across clock phases.
+* Controlled write-back synchronization.
+* Protection against invalid state updates during pipeline flushes.
+## Data Hazards
+
+Data hazards occur when an instruction depends on the result of a previous instruction that has not yet completed its passage through the pipeline. Such dependencies can lead to incorrect execution if the required operand is not available when needed.
+
+To ensure correct execution while maintaining pipeline performance, the processor implements multiple hazard mitigation techniques, including operand forwarding and load-use hazard detection. These mechanisms reduce unnecessary stalls and allow dependent instructions to execute with minimal performance degradation.
+
+The processor addresses data hazards through:
+
+* Operand forwarding from later pipeline stages.
+* Load-use hazard detection and pipeline stalling.
+* Bubble insertion to preserve correct instruction execution.
+
+### Operand Forwarding
+
+In a pipelined processor, a Read-After-Write (RAW) dependency occurs when an instruction requires a value that is being produced by a preceding instruction but has not yet been written back to the register file. Without hazard mitigation, the dependent instruction would have to stall until the value becomes available.
+
+To reduce performance loss due to such dependencies, the processor implements operand forwarding. Instead of waiting for the result to be written back to the register file, the forwarding logic routes the most recent value directly from later pipeline stages to the Execute stage.
+
+The forwarding unit continuously monitors source and destination register dependencies between instructions in different pipeline stages. When a dependency is detected, the forwarded value is selected as the ALU operand, allowing execution to proceed without introducing unnecessary stalls.
+
+### Forwarding Paths Implemented
+
+* EX/MEM → EX forwarding
+* MEM/WB → EX forwarding
+* Forwarding support for both source operands (`rs` and `rt`)
+* Dynamic operand selection based on dependency detection
+
+### Example
+
+Consider the following instruction sequence:
+
+```assembly
+ADD R1, R2, R3
+SUB R4, R1, R5
+```
+
+The `SUB` instruction requires the value of `R1`, which is produced by the preceding `ADD` instruction. Instead of waiting for the result to reach the Write Back stage, the forwarding unit supplies the ALU result directly to the Execute stage of the dependent instruction. This eliminates the need for a pipeline stall and improves instruction throughput.
+
+### Load-Use Hazard Detection
+
+Although operand forwarding resolves most Read-After-Write (RAW) dependencies, it cannot eliminate hazards that occur immediately after a load instruction. In a load operation, the requested data becomes available only after the Memory Access (MEM) stage, making it unavailable to the immediately following instruction during its Execute stage.
+
+To handle this situation, the processor implements a load-use hazard detection mechanism. The hazard detection logic monitors dependencies between instructions in the pipeline and identifies cases where an instruction attempts to use a value that is currently being loaded from memory.
+
+When such a dependency is detected, the processor temporarily stalls the pipeline by preventing further instruction fetch and decode operations. A bubble (NOP) is inserted into the pipeline, allowing the load instruction to progress and produce the required data before the dependent instruction is executed.
+
+### Hazard Resolution Strategy
+
+* Detect dependencies involving load instructions.
+* Freeze the Program Counter (PC) update.
+* Freeze the IF/ID pipeline register.
+* Insert a bubble into the ID/EX pipeline register.
+* Resume normal execution once the required data becomes available.
+
+### Example
+
+Consider the following instruction sequence:
+
+```assembly
+LW  R1, 0(R2)
+ADD R3, R1, R4
+```
+
+The `ADD` instruction requires the value loaded into `R1`. Since the data is not available until the completion of the Memory Access stage, forwarding alone cannot resolve the dependency. The hazard detection unit inserts a stall cycle, ensuring that the correct value is available before the `ADD` instruction enters execution.
