@@ -239,3 +239,32 @@ ADD R3, R1, R4
 ```
 
 The `ADD` instruction requires the value loaded into `R1`. Since the data is not available until the completion of the Memory Access stage, forwarding alone cannot resolve the dependency. The hazard detection unit inserts a stall cycle, ensuring that the correct value is available before the `ADD` instruction enters execution.
+
+## Control Hazards
+
+Control hazards arise when the processor encounters branch instructions that may alter the normal sequential flow of execution. Since the next instruction address depends on the outcome of the branch condition, instructions fetched before the branch decision is known may not belong to the correct execution path.
+
+To minimize branch penalties, the processor performs branch evaluation during the Instruction Decode (ID) stage. By resolving branch decisions earlier in the pipeline, the number of incorrectly fetched instructions is reduced, resulting in improved pipeline efficiency compared to conventional designs that resolve branches in the Execute stage.
+
+When a branch is determined to be taken, the Program Counter (PC) is redirected to the target address and the incorrectly fetched instruction is flushed from the pipeline. This ensures that execution continues from the correct instruction stream while maintaining architectural correctness.
+
+### Control Hazard Mitigation Techniques
+
+* Early branch resolution in the Decode stage.
+* Program Counter (PC) redirection for taken branches.
+* Pipeline flushing of incorrectly fetched instructions.
+* Prevention of invalid register and memory updates from flushed instructions.
+
+### Supported Branch Instructions
+
+* `BEQZ` – Branch if register value equals zero.
+* `BNEQZ` – Branch if register value is not equal to zero.
+
+### Example
+
+```assembly
+BEQZ R1, TARGET
+ADD  R2, R3, R4
+```
+
+If the branch condition evaluates to true, the processor redirects execution to `TARGET` and flushes the incorrectly fetched `ADD` instruction. This prevents the wrong-path instruction from modifying the processor state and ensures correct program execution.
