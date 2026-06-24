@@ -271,6 +271,11 @@ If the branch condition evaluates to true, the processor redirects execution to 
 
 ## Verification and Testing
 ### Test Case 1: Functional Verification (No Hazards)
+RTL Source:
+`RTL/MIPS32_pipe.v`
+Testbench:
+`Testbench/tb_MIPS32_pipe_no_hazard.v`
+
 **Test Case 1: Functional Verification (No Hazards)**
 
 This testbench validates the correct execution of all supported instruction classes in the absence of pipeline hazards. To isolate functional correctness from hazard-related effects, NOP instructions are inserted between consecutive operations, ensuring that no data dependencies exist between instructions.
