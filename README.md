@@ -307,6 +307,10 @@ The test program verifies:
 #### Simulation Result
 <img width="1613" height="801" alt="Screenshot 2026-06-24 095303" src="https://github.com/user-attachments/assets/94f18090-ae9e-4016-ad8a-31624081afa3" />
 
+
+<img width="1572" height="717" alt="image" src="https://github.com/user-attachments/assets/a5123263-a2d4-48f2-83fb-5133b8f98259" />
+
+
 ### Test Case 2: Data Hazard Verification – Operand Forwarding
 RTL Source:
 `RTL/MIPS32_pipe.v`
@@ -348,7 +352,10 @@ R9 = 25
 ```
 #### Simulation Result
 <img width="602" height="388" alt="Screenshot 2026-06-24 161936" src="https://github.com/user-attachments/assets/4ec41a7a-8d7f-4f8b-be68-bc607c2b8ddf" />
-<img width="1580" height="618" alt="Screenshot 2026-06-24 164224" src="https://github.com/user-attachments/assets/377cf46d-f8d1-4046-bf80-de2fd87d6122" />
+
+
+<img width="1582" height="757" alt="image" src="https://github.com/user-attachments/assets/752165ba-aa94-422d-9e01-fc49f110b68f" />
+
 
 
 
