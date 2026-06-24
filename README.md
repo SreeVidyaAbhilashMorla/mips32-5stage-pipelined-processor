@@ -276,8 +276,7 @@ RTL Source:
 Testbench:
 `Testbench/tb_MIPS32_pipe_no_hazard.v`
 
-**Test Case 1: Functional Verification (No Hazards)**
-
+#### Objective
 This testbench validates the correct execution of all supported instruction classes in the absence of pipeline hazards. To isolate functional correctness from hazard-related effects, NOP instructions are inserted between consecutive operations, ensuring that no data dependencies exist between instructions.
 
 The test program verifies:
@@ -307,3 +306,52 @@ The test program verifies:
 
 #### Simulation Result
 <img width="1613" height="801" alt="Screenshot 2026-06-24 095303" src="https://github.com/user-attachments/assets/94f18090-ae9e-4016-ad8a-31624081afa3" />
+
+### Test Case 2: Data Hazard Verification – Operand Forwarding
+RTL Source:
+`RTL/MIPS32_pipe.v`
+Testbench:
+`Testbench/tb_MIPS32_forwarding.v`
+#### Objective
+This test verifies the functionality of the forwarding unit in resolving Read-After-Write (RAW) data hazards without introducing pipeline stalls. Two forwarding scenarios are evaluated:
+
+* EX/MEM → EX forwarding
+* MEM/WB → EX forwarding
+
+The test ensures that dependent instructions receive the most recent operand values directly from later pipeline stages rather than waiting for register write-back.
+#### Test Program
+<img width="780" height="240" alt="Screenshot 2026-06-24 162046" src="https://github.com/user-attachments/assets/ee6d949d-49ab-4b6c-a9e6-3d0677ba3e48" />
+
+#### Test 1: EX/MEM → EX Forwarding
+```assembly
+ADD R5, R1, R2
+SUB R6, R5, R3
+```
+The SUB instruction immediately depends on the result produced by the preceding ADD instruction. Since the value of R5 has not yet been written back to the register file, the forwarding unit supplies the result directly from the EX/MEM pipeline register to the Execute stage of the dependent instruction.
+#### Expected Result
+```assembly
+R5 = 30
+R6 = 25
+```
+#### Test 2: MEM/WB → EX Forwarding
+```assembly
+ADD R8, R1, R2
+NOP
+SUB R9, R8, R3
+```
+A single-cycle gap is introduced between the producer and consumer instructions. When the SUB instruction enters the Execute stage, the value of R8 is available in the MEM/WB pipeline register. The forwarding unit supplies this value directly to the ALU input, eliminating the need for additional stalls.
+
+#### Expected Result
+```assembly
+R8 = 30
+R9 = 25
+```
+#### Simulation Result
+<img width="602" height="388" alt="Screenshot 2026-06-24 161936" src="https://github.com/user-attachments/assets/4ec41a7a-8d7f-4f8b-be68-bc607c2b8ddf" />
+<img width="1580" height="618" alt="Screenshot 2026-06-24 164224" src="https://github.com/user-attachments/assets/377cf46d-f8d1-4046-bf80-de2fd87d6122" />
+
+
+
+
+
+
