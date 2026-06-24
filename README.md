@@ -268,3 +268,37 @@ ADD  R2, R3, R4
 ```
 
 If the branch condition evaluates to true, the processor redirects execution to `TARGET` and flushes the incorrectly fetched `ADD` instruction. This prevents the wrong-path instruction from modifying the processor state and ensures correct program execution.
+
+## Verification and Testing
+### Test Case 1: Functional Verification (No Hazards)
+**Test Case 1: Functional Verification (No Hazards)**
+
+This testbench validates the correct execution of all supported instruction classes in the absence of pipeline hazards. To isolate functional correctness from hazard-related effects, NOP instructions are inserted between consecutive operations, ensuring that no data dependencies exist between instructions.
+
+The test program verifies:
+* Arithmetic operations (ADD, SUB, MUL)
+* Logical operations (AND, OR)
+* Comparison operations (SLT, SLTI)
+* Immediate instructions (ADDI, SUBI)
+* Memory operations (LW, SW)
+* Register write-back functionality
+* Memory read/write correctness
+#### Test Program
+| Test ID | Instruction      | Inputs       | Expected Result |
+| ------- | ---------------- | ------------ | --------------- |
+| T01     | ADD R8, R1, R2   | R1=10, R2=20 | R8=30           |
+| T02     | SUB R9, R2, R1   | R2=20, R1=10 | R9=10           |
+| T03     | AND R10, R4, R3  | R4=255, R3=5 | R10=5           |
+| T04     | OR R11, R4, R3   | R4=255, R3=5 | R11=255         |
+| T05     | SLT R12, R1, R2  | R1=10, R2=20 | R12=1           |
+| T06     | SLT R13, R2, R1  | R2=20, R1=10 | R13=0           |
+| T07     | MUL R14, R3, R6  | R3=5, R6=100 | R14=500         |
+| T08     | ADDI R15, R1, 7  | R1=10        | R15=17          |
+| T09     | SUBI R16, R6, 30 | R6=100       | R16=70          |
+| T10     | SLTI R17, R1, 15 | R1=10        | R17=1           |
+| T11     | SLTI R18, R6, 15 | R6=100       | R18=0           |
+| T12     | SW R7, 50(R0)    | R7=10        | Mem[50]=10      |
+| T13     | LW R19, 50(R0)   | Mem[50]=10   | R19=10          |
+
+#### Simulation Result
+<img width="1613" height="801" alt="Screenshot 2026-06-24 095303" src="https://github.com/user-attachments/assets/94f18090-ae9e-4016-ad8a-31624081afa3" />
