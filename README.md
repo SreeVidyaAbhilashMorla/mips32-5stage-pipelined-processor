@@ -393,9 +393,20 @@ R6      = 109
 
 <img width="1581" height="688" alt="Screenshot 2026-06-25 103105" src="https://github.com/user-attachments/assets/cecfd83b-a4b3-4a80-9469-1aee1d483033" />
 
+### Test Case 4: Control Hazard Verification
+#### Objective
 
+This test validates the processor's control hazard handling mechanism for branch instructions. The goal is to ensure that branch decisions are resolved correctly, wrong-path instructions are flushed from the pipeline, and execution continues from the correct target address.
 
+The verification covers both taken and not-taken branch scenarios, branch flushing behavior, consecutive branches, and branch target execution.
 
+#### Branch Instructions Tested
+<img width="631" height="182" alt="image" src="https://github.com/user-attachments/assets/55b45aa9-836c-41f2-a10a-a9c0d6c016fb" />
 
+#### Simulation Result
+<img width="591" height="471" alt="Screenshot 2026-06-25 170117" src="https://github.com/user-attachments/assets/b470af9f-f768-4fd4-b666-3bd25e124df0" />
+
+<img width="1566" height="650" alt="Screenshot 2026-06-25 165923" src="https://github.com/user-attachments/assets/56dd57fd-7f9a-479c-94da-77116bf02dc6" />
+<img width="1572" height="211" alt="Screenshot 2026-06-25 165951" src="https://github.com/user-attachments/assets/d8761400-ad44-4582-86f2-95f6a390e2ee" />
 
 
