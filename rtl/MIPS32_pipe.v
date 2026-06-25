@@ -1,4 +1,4 @@
-Module Name: MIPS32_pipe
+//Module Name: MIPS32_pipe
 // Description: 5-stage pipelined MIPS32 processor with:
 //              1. Control hazard  - branch resolved in ID stage (1-cycle flush only)
 //              2. Data hazard     - full forwarding unit (EX-to-EX and MEM-to-EX paths)
