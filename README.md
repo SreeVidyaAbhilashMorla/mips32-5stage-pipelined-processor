@@ -356,6 +356,43 @@ R9 = 25
 
 <img width="1582" height="757" alt="image" src="https://github.com/user-attachments/assets/752165ba-aa94-422d-9e01-fc49f110b68f" />
 
+### Test Case 3: Data Hazard Verification – Load-Use Hazard Detection
+#### Objective
+
+This test verifies the processor's ability to detect and resolve load-use data hazards. Unlike normal RAW dependencies that can be handled through operand forwarding, a load instruction does not produce valid data until the Memory Access (MEM) stage. Therefore, an immediately dependent instruction must be stalled to ensure correct execution.
+#### Test Program
+<img width="577" height="110" alt="Screenshot 2026-06-25 102246" src="https://github.com/user-attachments/assets/ddc7ff2c-46b0-4d83-8dfb-19bf951bea1d" />
+
+```assembly
+LW  R5, 50(R0)
+ADD R6, R5, R1
+```
+#### Hazard Scenario
+
+The ADD instruction requires the value of R5 immediately after it is loaded from memory. Since the data is not yet available when the dependent instruction reaches the Execute stage, forwarding alone cannot resolve the dependency.
+
+The hazard detection unit identifies this condition and temporarily stalls the pipeline, allowing the load instruction to complete before the dependent instruction proceeds.
+
+#### Expected Behavior
+
+- Load-use dependency detected.
+- Program Counter (PC) update is stalled.
+- IF/ID pipeline register is frozen.
+- A bubble (NOP) is inserted into the pipeline.
+- Execution resumes once the loaded data becomes available.
+  
+#### Expected Result
+```assembly
+mem[50] = 99
+R1      = 10
+R5      = 99
+R6      = 109
+```
+#### Simulation Result
+<img width="582" height="363" alt="Screenshot 2026-06-25 102404" src="https://github.com/user-attachments/assets/5fec7b33-80be-471b-8652-0e2081b5e837" />
+
+<img width="1581" height="688" alt="Screenshot 2026-06-25 103105" src="https://github.com/user-attachments/assets/cecfd83b-a4b3-4a80-9469-1aee1d483033" />
+
 
 
 
